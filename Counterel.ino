@@ -6,17 +6,63 @@ LedControl lc=LedControl(12,10,11,1);  // Pins: DIN,CLK,CS, see Youtube tutorial
 // Put values in arrays
 byte zero[] = //8x5
 {
-   B00011000,  // First frame of invader #1
-   B00111100,
-   B01111110,
-   B11011011,
-   B11111111,
-   B00100100,
-   B01011010,
-   B10100101
+   B00100,  // digit 0
+   B01010,
+   B10001,
+   B10001,
+   B10001,
+   B10001,
+   B01010,
+   B00100
 };
 
+byte one[] = //8x5
+{
+   B00010,  // digit 1
+   B00110,
+   B01010,
+   B10010,
+   B00001,
+   B00001,
+   B00001,
+   B00001
+};
 
+byte two[] = //8x5
+{
+   B00100,  // digit 2
+   B01010,
+   B10001,
+   B00001,
+   B00010,
+   B00100,
+   B01000,
+   B11111
+};
+
+byte three[] = //8x5
+{
+   B01110,  // digit 3
+   B10001,
+   B00001,
+   B00110,
+   B00001,
+   B10001,
+   B01010,
+   B00100
+};
+
+byte four[] = //8x5
+{
+   B00010,  // digit 4
+   B00110,
+   B01010,
+   B10010,
+   B11111,
+   B00010,
+   B00010,
+   B00010
+};s
 
 void setup() {
   // put your setup code here, to run once:
