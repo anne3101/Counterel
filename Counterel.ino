@@ -133,6 +133,8 @@ const int BUTTON_PIN = 7;
 
 int counter = 0;
 const int COUNTER_ADDRESS = 0;
+const int FAST_ADD_TICK = 300;
+const int TICK = 10;
 
 void setup() {
   // Display setup
@@ -150,53 +152,106 @@ void setup() {
 
   // Define internal led as output
   pinMode(LED_BUILTIN, OUTPUT);
+
+  // DEBUG, DELETE
+  counter = 0;
+
+  display_counter();
 }
 
-void increase_counter() {
-  counter++;
+void display_counter() {
   lc.clearDisplay(0);
   lc.setLed(0, counter / 8, counter % 8, true);
+  EEPROM.put(COUNTER_ADDRESS, counter);
+}
+
+void sum_to_counter(int delta) {
+  counter+=delta;
+  display_counter();
+}
+
+void fast_change(int delta){
+  bool released = false;
+  while (!released) {
+    if(digitalRead(BUTTON_PIN) != LOW){
+      released = true;
+    }
+    sum_to_counter(delta);
+    delay(FAST_ADD_TICK);
+  } 
+}
+
+void fast_increment() {
+  fast_change(1);
+}
+
+void fast_decrease() {
+  fast_change(-1);
+}
+
+void increase_counter(){
+  sum_to_counter(1);
+}
+
+void decrease_counter(){
+  sum_to_counter(-1);
 }
 
 void loop() {
-  
-  // put your main code here, to run repeatedly:
-  lc.clearDisplay(0);
-  lc.setLed(0, counter / 8, counter % 8, true);
+    
   // Read the value of the input. It can either be 1 or 0
   int buttonValue = digitalRead(BUTTON_PIN);
   if (buttonValue == LOW) {
-    // If button apushed, turn LED on
-    digitalWrite(LED_BUILTIN, HIGH);
-    increase_counter();
-    EEPROM.put(COUNTER_ADDRESS, counter);
     
+
     bool released = false;
-    const int TICK = 10;
     int current_waiting_time = 0;
-    const int MAX_WAITING_TIME = 1000;
-    
-    while (!released && current_waiting_time < MAX_WAITING_TIME) {
+    const int MAX_WAITING_TIME = 3000;
+    const int DOUBLE_CLICK_WAITING_TIME = 1000;
+
+    while (!released && current_waiting_time < DOUBLE_CLICK_WAITING_TIME) {
       delay(TICK);
       current_waiting_time += TICK;
-      if(digitalRead(BUTTON_PIN) != LOW){
-        released = true;
-      }
-    } 
-
-    const int FAST_ADD_TICK = 300;
-
-    while (!released) {
-      if(digitalRead(BUTTON_PIN) != LOW){
-        released = true;
-      }
+      released = digitalRead(BUTTON_PIN) != LOW;
+    }
+    // kept pressing through double click time
+    if(!released){
+      // increase once
       increase_counter();
-      delay(FAST_ADD_TICK);
-    } 
-    
-  } else {
-    // Otherwise, turn the LED off
-    digitalWrite(LED_BUILTIN, LOW);
+      // wait for fast add
+      while (!released && current_waiting_time < MAX_WAITING_TIME) {
+        delay(TICK);
+        current_waiting_time += TICK;
+        released = digitalRead(BUTTON_PIN) != LOW;
+      }
+      if(!released){
+        fast_increment();
+      }
+    }
+    else {
+    // released before double click time
+      while (released && current_waiting_time < DOUBLE_CLICK_WAITING_TIME) {
+        delay(TICK);
+        current_waiting_time += TICK;
+        released = digitalRead(BUTTON_PIN) != LOW;
+      }
+      // if didn't click again during double click time, just increase once
+      if(released){
+        increase_counter();
+      } else {
+      // if did double click, reset current_waiting_time and start substracting flow
+        decrease_counter();
+        current_waiting_time = 0;
+        while (!released && current_waiting_time < MAX_WAITING_TIME) {
+          delay(TICK);
+          current_waiting_time += TICK;
+          released = digitalRead(BUTTON_PIN) != LOW;
+        }
+        if(!released){
+          fast_decrease();
+        }
+      }
+    }    
   }
 
 }
