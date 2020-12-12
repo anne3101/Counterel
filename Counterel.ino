@@ -1,5 +1,5 @@
 #include <LedControl.h>
-
+#include <EEPROM.h>
 
 #include "LedControl.h"
 #include "Arduino.h"
@@ -131,12 +131,19 @@ LedControl lc = LedControl(12, 10, 11, 4); // Pins: DIN,CLK,CS, see Youtube tuto
 
 const int BUTTON_PIN = 7;
 
+int counter = 0;
+const int COUNTER_ADDRESS = 0;
+
 void setup() {
   // Display setup
-  lc.shutdown(0, false); // Wake up displays
-  lc.setIntensity(0, 5); // Set intensity levels
-  lc.clearDisplay(0);  // Clear Display
-  lc.setLed(0, 1, 1, true);
+  for(int display_index=0; display_index<4; display_index++) {
+     lc.shutdown(display_index, false); // Wake up displays
+     lc.setIntensity(display_index, 5); // Set intensity levels
+     lc.clearDisplay(display_index);  // Clear Display
+  }
+
+  // Initialize counter
+  EEPROM.get(COUNTER_ADDRESS, counter);
 
   // Define pin #07 as input and activate the internal pull-up resistor
   pinMode(BUTTON_PIN, INPUT_PULLUP);
@@ -145,15 +152,48 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 }
 
-void loop() {
-  lc.setLed(0, 1, 1, true);
-  // put your main code here, to run repeatedly:
+void increase_counter() {
+  counter++;
+  lc.clearDisplay(0);
+  lc.setLed(0, counter / 8, counter % 8, true);
+}
 
+void loop() {
+  
+  // put your main code here, to run repeatedly:
+  lc.clearDisplay(0);
+  lc.setLed(0, counter / 8, counter % 8, true);
   // Read the value of the input. It can either be 1 or 0
   int buttonValue = digitalRead(BUTTON_PIN);
   if (buttonValue == LOW) {
     // If button apushed, turn LED on
     digitalWrite(LED_BUILTIN, HIGH);
+    increase_counter();
+    EEPROM.put(COUNTER_ADDRESS, counter);
+    
+    bool released = false;
+    const int TICK = 10;
+    int current_waiting_time = 0;
+    const int MAX_WAITING_TIME = 1000;
+    
+    while (!released && current_waiting_time < MAX_WAITING_TIME) {
+      delay(TICK);
+      current_waiting_time += TICK;
+      if(digitalRead(BUTTON_PIN) != LOW){
+        released = true;
+      }
+    } 
+
+    const int FAST_ADD_TICK = 300;
+
+    while (!released) {
+      if(digitalRead(BUTTON_PIN) != LOW){
+        released = true;
+      }
+      increase_counter();
+      delay(FAST_ADD_TICK);
+    } 
+    
   } else {
     // Otherwise, turn the LED off
     digitalWrite(LED_BUILTIN, LOW);
