@@ -1,0 +1,6 @@
+{
+    "sketch": "Counterel.ino",
+    "board": "arduino:avr:nano",
+    "configuration": "cpu=atmega328old",
+    "port": "/dev/tty.usbserial-1420"
+}

@@ -69,7 +69,7 @@ byte four[] = //8x5
 
 byte five[] = //8x5
 {
-  B11111,  // First frame of invader #1
+  B11111,  // 5
   B10000,
   B10000,
   B11110,
@@ -81,7 +81,7 @@ byte five[] = //8x5
 
 byte six[] = //8x5
 {
-  B00110,  // First frame of invader #1
+  B00110,  // 6
   B01001,
   B11000,
   B11110,
@@ -93,7 +93,7 @@ byte six[] = //8x5
 
 byte seven[] = //8x5
 {
-  B11111,  // First frame of invader #1
+  B11111,  // 7
   B00001,
   B00010,
   B11111,
@@ -105,7 +105,7 @@ byte seven[] = //8x5
 
 byte eight[] = //8x5
 {
-  B01110,  // First frame of invader #1
+  B01110,  // 8
   B10001,
   B10001,
   B01110,
@@ -117,7 +117,7 @@ byte eight[] = //8x5
 
 byte nine[] = //8x5
 {
-  B01110,  // First frame of invader #1
+  B01110,  // 9
   B10001,
   B10011,
   B01111,
@@ -127,21 +127,28 @@ byte nine[] = //8x5
   B01110
 };
 
-LedControl lc = LedControl(12, 10, 11, 1); // Pins: DIN,CLK,CS, see Youtube tutorial for details, num displays connected
+LedControl lc = LedControl(12, 10, 11, 4); // Pins: DIN,CLK,CS, see Youtube tutorial for details, num displays connected
 
 // Put values in arrays
 
 
 void setup() {
   // put your setup code here, to run once:
-  lc.shutdown(0, false); // Wake up displays
-  lc.setIntensity(0, 5); // Set intensity levels
-  lc.clearDisplay(0);  // Clear Display
-  lc.setLed(0, 1, 1, true);
+  for(int display_index=0; display_index<4; display_index++) {
+     lc.shutdown(display_index, false); // Wake up displays
+     lc.setIntensity(display_index, 5); // Set intensity levels
+     lc.clearDisplay(display_index);  // Clear Display
+  }
 }
 
 void loop() {
-    lc.setLed(0, 1, 1, true);
+    //lc.setLed(0, 1, 9, true);
   // put your main code here, to run repeatedly:
+       for(int index=0;index<4;index++) {
+        lc.setLed(index, 1, 2, true);
+    } 
+}
 
+void showNumber(int number) {
+  
 }
