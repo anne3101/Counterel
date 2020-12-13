@@ -18,6 +18,12 @@
             "defines": [
                 "USBCON"
             ],
+<<<<<<< HEAD
+=======
+            "defines": [
+                "USBCON"
+            ],
+>>>>>>> origin/displayNumberFunction
             "macFrameworkPath": [
                 "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
             ],
