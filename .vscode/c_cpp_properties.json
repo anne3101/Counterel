@@ -8,9 +8,16 @@
                 "/Applications/Arduino.app/Contents/Java/libraries/**",
                 "/Applications/Arduino.app/Contents/Java/hardware/tools/**",
                 "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/**",
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "/Users/jclepore/Downloads/Arduino.app/Contents/Java/hardware/arduino/avr/**",
+                "/Users/jclepore/Downloads/Arduino.app/Contents/Java/hardware/tools/**",
+                "/Users/jclepore/Downloads/Arduino.app/Contents/Java/libraries/**",
+                "/Users/jclepore/Documents/Arduino/libraries/**",
+                "/Users/jclepore/Downloads/Arduino.app/Contents/Java/tools/**"
             ],
-            "defines": [],
+            "defines": [
+                "USBCON"
+            ],
             "macFrameworkPath": [
                 "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
             ],
@@ -19,7 +26,8 @@
             "cppStandard": "c++17",
             "intelliSenseMode": "clang-x64",
             "forcedInclude": [
-                "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/Arduino.h"
+                "/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/Arduino.h",
+                "/Users/jclepore/Downloads/Arduino.app/Contents/Java/hardware/arduino/avr/cores/arduino/Arduino.h"
             ]
         }
     ],
