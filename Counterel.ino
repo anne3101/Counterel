@@ -95,7 +95,7 @@ int six[] = //8x5
 {
     B00110,  // 6
     B01001,
-    B11000,
+    B10000,
     B11110,
     B10011,
     B10001,
@@ -121,7 +121,7 @@ int eight[] = //8x5
     B10001,
     B10001,
     B01110,
-    B10011,
+    B10001,
     B10001,
     B10001,
     B01110
@@ -131,7 +131,7 @@ int nine[] = //8x5
 {
     B01110,  // 9
     B10001,
-    B10011,
+    B10001,
     B01111,
     B00001,
     B00001,
@@ -160,7 +160,7 @@ void showNumber(int mynum) {
     char num_str[5];
     itoa(mynum, num_str, 10);
     int divide = 10000;
-    while(mynum / divide < 1) {  
+    while(mynum < divide && divide > 1) {  
         num_str[4] = num_str[3];
         num_str[3] = num_str[2];
         num_str[2] = num_str[1];
@@ -218,6 +218,13 @@ const int COUNTER_ADDRESS = 0;
 const int FAST_ADD_TICK = 300;
 const int TICK = 10;
 
+void display_counter() {
+  // lc.clearDisplay(0);
+  // lc.setLed(0, counter / 8, counter % 8, true);
+  showNumber(counter);
+  EEPROM.put(COUNTER_ADDRESS, counter);
+}
+
 void setup() {
   // Display setup
   for(int display_index=0; display_index<4; display_index++) {
@@ -228,6 +235,9 @@ void setup() {
 
   // Initialize counter
   EEPROM.get(COUNTER_ADDRESS, counter);
+  if(counter < 0){
+    counter = 0;
+  }
 
   // Define pin #07 as input and activate the internal pull-up resistor
   pinMode(BUTTON_PIN, INPUT_PULLUP);
@@ -236,15 +246,9 @@ void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
 
   // DEBUG, DELETE
-  counter = 0;
+  // counter = 0;
 
   display_counter();
-}
-
-void display_counter() {
-  lc.clearDisplay(0);
-  lc.setLed(0, counter / 8, counter % 8, true);
-  EEPROM.put(COUNTER_ADDRESS, counter);
 }
 
 void sum_to_counter(int delta) {
@@ -280,7 +284,8 @@ void decrease_counter(){
 }
 
 void loop() {
-    
+  
+  
   // Read the value of the input. It can either be 1 or 0
   int buttonValue = digitalRead(BUTTON_PIN);
   if (buttonValue == LOW) {
@@ -288,8 +293,8 @@ void loop() {
 
     bool released = false;
     int current_waiting_time = 0;
-    const int MAX_WAITING_TIME = 3000;
-    const int DOUBLE_CLICK_WAITING_TIME = 1000;
+    const int MAX_WAITING_TIME = 1000;
+    const int DOUBLE_CLICK_WAITING_TIME = 350;
 
     while (!released && current_waiting_time < DOUBLE_CLICK_WAITING_TIME) {
       delay(TICK);
@@ -335,5 +340,5 @@ void loop() {
       }
     }    
   }
-
+  
 }
